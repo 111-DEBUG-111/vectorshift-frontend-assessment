@@ -26,9 +26,21 @@ export const useStore = create((set, get) => ({
         });
     },
     onNodesChange: (changes) => {
-      set({
-        nodes: applyNodeChanges(changes, get().nodes),
-      });
+      const removedIds = changes
+        .filter((change) => change.type === 'remove')
+        .map((change) => change.id);
+
+      const nextNodes = applyNodeChanges(changes, get().nodes);
+      const nextEdges =
+        removedIds.length > 0
+          ? get().edges.filter(
+              (edge) =>
+                !removedIds.includes(edge.source) &&
+                !removedIds.includes(edge.target)
+            )
+          : get().edges;
+
+      set({ nodes: nextNodes, edges: nextEdges });
     },
     onEdgesChange: (changes) => {
       set({

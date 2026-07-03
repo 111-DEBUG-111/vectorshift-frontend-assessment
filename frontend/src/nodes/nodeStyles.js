@@ -18,3 +18,20 @@ export const fieldLabelStyle = {
 export const fieldInputStyle = {
   fontSize: 12,
 };
+
+export const nodeHeaderStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 4,
+};
+
+export const deleteButtonStyle = {
+  border: 'none',
+  background: 'transparent',
+  color: '#64748b',
+  cursor: 'pointer',
+  fontSize: 16,
+  lineHeight: 1,
+  padding: '0 4px',
+};

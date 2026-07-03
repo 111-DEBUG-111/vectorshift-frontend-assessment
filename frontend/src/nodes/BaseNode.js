@@ -1,5 +1,11 @@
-import { Handle, Position } from 'reactflow';
-import { defaultNodeStyle, fieldLabelStyle, fieldInputStyle } from './nodeStyles';
+import { Handle, Position, useReactFlow } from 'reactflow';
+import {
+  defaultNodeStyle,
+  fieldLabelStyle,
+  fieldInputStyle,
+  nodeHeaderStyle,
+  deleteButtonStyle,
+} from './nodeStyles';
 
 const POSITION_MAP = {
   left: Position.Left,
@@ -65,6 +71,7 @@ const renderField = (field, value, setField) => {
     case 'select':
       return (
         <select
+          className="nodrag"
           value={value}
           onChange={onChange}
           style={fieldInputStyle}
@@ -82,6 +89,7 @@ const renderField = (field, value, setField) => {
     case 'number':
       return (
         <input
+          className="nodrag"
           type="number"
           value={value}
           onChange={onChange}
@@ -91,6 +99,7 @@ const renderField = (field, value, setField) => {
     case 'textarea':
       return (
         <textarea
+          className="nodrag"
           value={value}
           onChange={onChange}
           style={{ ...fieldInputStyle, resize: 'vertical', minHeight: 48 }}
@@ -100,6 +109,7 @@ const renderField = (field, value, setField) => {
     default:
       return (
         <input
+          className="nodrag"
           type="text"
           value={value}
           onChange={onChange}
@@ -110,16 +120,31 @@ const renderField = (field, value, setField) => {
 };
 
 export const BaseNode = ({ id, config, fields, setField }) => {
+  const { deleteElements } = useReactFlow();
   const containerStyle = { ...defaultNodeStyle, ...config.style };
   const { label, description, handles = {}, fields: fieldDefs = [], renderBody } = config;
+
+  const handleDelete = (event) => {
+    event.stopPropagation();
+    deleteElements({ nodes: [{ id }] });
+  };
 
   return (
     <div style={containerStyle}>
       {renderHandles(handles.inputs, 'target', 'left', id)}
       {renderHandles(handles.outputs, 'source', 'right', id)}
 
-      <div>
+      <div style={nodeHeaderStyle}>
         <span>{label}</span>
+        <button
+          type="button"
+          className="nodrag"
+          onClick={handleDelete}
+          style={deleteButtonStyle}
+          aria-label="Delete node"
+        >
+          ×
+        </button>
       </div>
 
       {description && (
