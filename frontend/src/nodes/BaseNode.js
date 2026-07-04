@@ -1,11 +1,4 @@
 import { Handle, Position, useReactFlow } from 'reactflow';
-import {
-  defaultNodeStyle,
-  fieldLabelStyle,
-  fieldInputStyle,
-  nodeHeaderStyle,
-  deleteButtonStyle,
-} from './nodeStyles';
 
 const POSITION_MAP = {
   left: Position.Left,
@@ -71,10 +64,9 @@ const renderField = (field, value, setField) => {
     case 'select':
       return (
         <select
-          className="nodrag"
+          className="nodrag node-field__select"
           value={value}
           onChange={onChange}
-          style={fieldInputStyle}
         >
           {field.options.map((option) => {
             const { value: optionValue, label } = normalizeOption(option);
@@ -89,31 +81,28 @@ const renderField = (field, value, setField) => {
     case 'number':
       return (
         <input
-          className="nodrag"
+          className="nodrag node-field__input"
           type="number"
           value={value}
           onChange={onChange}
-          style={fieldInputStyle}
         />
       );
     case 'textarea':
       return (
         <textarea
-          className="nodrag"
+          className="nodrag node-field__textarea"
           value={value}
           onChange={onChange}
-          style={{ ...fieldInputStyle, resize: 'vertical', minHeight: 48 }}
         />
       );
     case 'text':
     default:
       return (
         <input
-          className="nodrag"
+          className="nodrag node-field__input"
           type="text"
           value={value}
           onChange={onChange}
-          style={fieldInputStyle}
         />
       );
   }
@@ -121,8 +110,17 @@ const renderField = (field, value, setField) => {
 
 export const BaseNode = ({ id, config, fields, setField }) => {
   const { deleteElements } = useReactFlow();
-  const containerStyle = { ...defaultNodeStyle, ...config.style };
-  const { label, description, handles = {}, fields: fieldDefs = [], renderBody } = config;
+  const {
+    label,
+    description,
+    icon: Icon,
+    accent,
+    className,
+    handles = {},
+    fields: fieldDefs = [],
+    renderBody,
+    style,
+  } = config;
 
   const handleDelete = (event) => {
     event.stopPropagation();
@@ -130,36 +128,41 @@ export const BaseNode = ({ id, config, fields, setField }) => {
   };
 
   return (
-    <div style={containerStyle}>
+    <div
+      className={`node-card${className ? ` ${className}` : ''}`}
+      style={{ ...(accent ? { '--accent': accent } : {}), ...style }}
+    >
       {renderHandles(handles.inputs, 'target', 'left', id)}
       {renderHandles(handles.outputs, 'source', 'right', id)}
 
-      <div style={nodeHeaderStyle}>
-        <span>{label}</span>
+      <div className="node-card__accent" />
+
+      <div className="node-card__header">
+        {Icon && (
+          <span className="node-card__icon">
+            <Icon size={13} />
+          </span>
+        )}
+        <span className="node-card__title">{label}</span>
         <button
           type="button"
-          className="nodrag"
+          className="nodrag node-card__delete"
           onClick={handleDelete}
-          style={deleteButtonStyle}
           aria-label="Delete node"
         >
           ×
         </button>
       </div>
 
-      {description && (
-        <div>
-          <span>{description}</span>
-        </div>
-      )}
+      {description && <div className="node-card__description">{description}</div>}
 
       {renderBody ? (
         renderBody({ id, data: fields, fields, setField })
       ) : (
-        <div>
+        <div className="node-card__body">
           {fieldDefs.map((field) => (
-            <label key={field.name} style={fieldLabelStyle}>
-              {field.label}:
+            <label key={field.name} className="node-field">
+              <span className="node-field__label">{field.label}</span>
               {renderField(field, fields[field.name], setField)}
             </label>
           ))}

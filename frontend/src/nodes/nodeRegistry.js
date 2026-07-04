@@ -1,3 +1,14 @@
+import {
+  FiLogIn,
+  FiLogOut,
+  FiCpu,
+  FiType,
+  FiGitBranch,
+  FiGitMerge,
+  FiGlobe,
+  FiClock,
+  FiFileText,
+} from 'react-icons/fi';
 import { createNode } from './createNode';
 
 export const nodeDefinitions = [
@@ -5,6 +16,8 @@ export const nodeDefinitions = [
     type: 'customInput',
     label: 'Input',
     toolbarLabel: 'Input',
+    icon: FiLogIn,
+    accent: 'var(--accent-input)',
     handles: {
       outputs: [{ id: 'value' }],
     },
@@ -28,6 +41,8 @@ export const nodeDefinitions = [
     type: 'llm',
     label: 'LLM',
     toolbarLabel: 'LLM',
+    icon: FiCpu,
+    accent: 'var(--accent-llm)',
     description: 'This is a LLM.',
     handles: {
       inputs: [{ id: 'system' }, { id: 'prompt' }],
@@ -38,6 +53,8 @@ export const nodeDefinitions = [
     type: 'customOutput',
     label: 'Output',
     toolbarLabel: 'Output',
+    icon: FiLogOut,
+    accent: 'var(--accent-output)',
     handles: {
       inputs: [{ id: 'value' }],
     },
@@ -64,6 +81,8 @@ export const nodeDefinitions = [
     type: 'text',
     label: 'Text',
     toolbarLabel: 'Text',
+    icon: FiType,
+    accent: 'var(--accent-text)',
     handles: {
       outputs: [{ id: 'output' }],
     },
@@ -80,6 +99,8 @@ export const nodeDefinitions = [
     type: 'condition',
     label: 'Condition',
     toolbarLabel: 'Condition',
+    icon: FiGitBranch,
+    accent: 'var(--accent-condition)',
     description: 'Routes based on expression',
     handles: {
       inputs: [{ id: 'input' }],
@@ -98,6 +119,8 @@ export const nodeDefinitions = [
     type: 'merge',
     label: 'Merge',
     toolbarLabel: 'Merge',
+    icon: FiGitMerge,
+    accent: 'var(--accent-merge)',
     description: 'Combines multiple inputs',
     handles: {
       inputs: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
@@ -117,6 +140,8 @@ export const nodeDefinitions = [
     type: 'apiRequest',
     label: 'API Request',
     toolbarLabel: 'API',
+    icon: FiGlobe,
+    accent: 'var(--accent-api)',
     handles: {
       inputs: [{ id: 'payload' }],
       outputs: [{ id: 'response' }],
@@ -141,6 +166,8 @@ export const nodeDefinitions = [
     type: 'delay',
     label: 'Delay',
     toolbarLabel: 'Delay',
+    icon: FiClock,
+    accent: 'var(--accent-delay)',
     description: 'Waits before passing data through',
     handles: {
       inputs: [{ id: 'input' }],
@@ -159,6 +186,9 @@ export const nodeDefinitions = [
     type: 'note',
     label: 'Note',
     toolbarLabel: 'Note',
+    icon: FiFileText,
+    accent: 'var(--accent-note)',
+    className: 'node-card--note',
     style: { minHeight: 120 },
     fields: [
       {
@@ -175,7 +205,9 @@ export const nodeTypes = Object.fromEntries(
   nodeDefinitions.map((config) => [config.type, createNode(config)])
 );
 
-export const toolbarNodes = nodeDefinitions.map(({ type, toolbarLabel }) => ({
+export const toolbarNodes = nodeDefinitions.map(({ type, toolbarLabel, icon, accent }) => ({
   type,
   label: toolbarLabel,
+  icon,
+  accent,
 }));

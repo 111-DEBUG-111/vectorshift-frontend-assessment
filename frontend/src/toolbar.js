@@ -6,12 +6,11 @@ import { toolbarNodes } from './nodes/nodeRegistry';
 export const PipelineToolbar = () => {
 
     return (
-        <div style={{ padding: '10px' }}>
-            <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {toolbarNodes.map(({ type, label }) => (
-                    <DraggableNode key={type} type={type} label={label} />
-                ))}
-            </div>
+        <div className="toolbar">
+            <span className="toolbar__label">Nodes</span>
+            {toolbarNodes.map(({ type, label, icon, accent }) => (
+                <DraggableNode key={type} type={type} label={label} icon={icon} accent={accent} />
+            ))}
         </div>
     );
 };

@@ -1,0 +1,65 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.toolbar__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.toolbar-node {
+  --accent: var(--color-brand-solid);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.toolbar-node:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-xs);
+  transform: translateY(-1px);
+}
+
+.toolbar-node:active,
+.toolbar-node.is-dragging {
+  cursor: grabbing;
+  transform: translateY(0) scale(0.97);
+}
+
+.toolbar-node__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 16%, white);
+  color: var(--accent);
+  font-size: 12px;
+  flex-shrink: 0;
+}

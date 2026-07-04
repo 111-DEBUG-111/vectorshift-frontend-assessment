@@ -81,7 +81,7 @@ export const PipelineUI = () => {
 
     return (
         <>
-        <div ref={reactFlowWrapper} style={{width: '100wv', height: '70vh'}}>
+        <div ref={reactFlowWrapper} className="canvas-wrapper">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -99,9 +99,15 @@ export const PipelineUI = () => {
                 nodesDeletable
                 edgesDeletable
             >
-                <Background color="#aaa" gap={gridSize} />
-                <Controls />
-                <MiniMap />
+                <Background color="#c7cbd6" gap={gridSize} size={1.5} />
+                <Controls showInteractive={false} />
+                <MiniMap
+                    pannable
+                    zoomable
+                    nodeColor="#c9c2fb"
+                    nodeStrokeWidth={0}
+                    maskColor="rgba(245, 246, 250, 0.7)"
+                />
             </ReactFlow>
         </div>
         </>
