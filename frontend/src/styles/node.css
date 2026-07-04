@@ -130,6 +130,11 @@
   font-family: var(--font-sans);
 }
 
+.node-field__textarea--auto {
+  resize: none;
+  overflow-y: hidden;
+}
+
 .node-field__input:focus,
 .node-field__select:focus,
 .node-field__textarea:focus {

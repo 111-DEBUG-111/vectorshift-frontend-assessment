@@ -10,6 +10,7 @@ import {
   FiFileText,
 } from 'react-icons/fi';
 import { createNode } from './createNode';
+import { extractVariables, computeTextNodeWidth } from './textNodeUtils';
 
 export const nodeDefinitions = [
   {
@@ -83,14 +84,19 @@ export const nodeDefinitions = [
     toolbarLabel: 'Text',
     icon: FiType,
     accent: 'var(--accent-text)',
-    handles: {
+    handles: (fields) => ({
+      inputs: extractVariables(fields.text).map((name) => ({
+        id: `var-${name}`,
+        label: name,
+      })),
       outputs: [{ id: 'output' }],
-    },
+    }),
+    style: (fields) => ({ width: computeTextNodeWidth(fields.text) }),
     fields: [
       {
         name: 'text',
         label: 'Text',
-        type: 'text',
+        type: 'autoTextarea',
         default: '{{input}}',
       },
     ],

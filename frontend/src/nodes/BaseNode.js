@@ -1,4 +1,7 @@
-import { Handle, Position, useReactFlow } from 'reactflow';
+import { useEffect, useLayoutEffect, useRef } from 'react';
+import { Handle, Position, useReactFlow, useUpdateNodeInternals } from 'reactflow';
+import { useStore } from '../store';
+import { MAX_TEXTAREA_HEIGHT } from './textNodeUtils';
 
 const POSITION_MAP = {
   left: Position.Left,
@@ -44,17 +47,44 @@ const renderHandles = (handles, handleType, defaultPosition, nodeId) => {
           position={POSITION_MAP[position]}
           id={`${nodeId}-${handle.id}`}
           style={style}
+          title={handle.label}
         />
       );
     })
   );
 };
 
+const collectComposedHandleIds = (handles, nodeId) =>
+  (handles || []).map((handle) => `${nodeId}-${handle.id}`);
+
 const normalizeOption = (option) => {
   if (typeof option === 'string') {
     return { value: option, label: option };
   }
   return option;
+};
+
+const AutoGrowTextarea = ({ value, onChange, className }) => {
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    const next = Math.min(el.scrollHeight, MAX_TEXTAREA_HEIGHT);
+    el.style.height = `${next}px`;
+    el.style.overflowY = el.scrollHeight > MAX_TEXTAREA_HEIGHT ? 'auto' : 'hidden';
+  }, [value]);
+
+  return (
+    <textarea
+      ref={ref}
+      className={className}
+      value={value}
+      onChange={onChange}
+      rows={1}
+    />
+  );
 };
 
 const renderField = (field, value, setField) => {
@@ -95,6 +125,14 @@ const renderField = (field, value, setField) => {
           onChange={onChange}
         />
       );
+    case 'autoTextarea':
+      return (
+        <AutoGrowTextarea
+          className="nodrag node-field__textarea node-field__textarea--auto"
+          value={value}
+          onChange={onChange}
+        />
+      );
     case 'text':
     default:
       return (
@@ -110,17 +148,47 @@ const renderField = (field, value, setField) => {
 
 export const BaseNode = ({ id, config, fields, setField }) => {
   const { deleteElements } = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
+  const pruneDanglingEdges = useStore((state) => state.pruneDanglingEdges);
   const {
     label,
     description,
     icon: Icon,
     accent,
     className,
-    handles = {},
+    handles: handlesConfig = {},
     fields: fieldDefs = [],
     renderBody,
-    style,
+    style: styleConfig,
   } = config;
+
+  const handles =
+    typeof handlesConfig === 'function' ? handlesConfig(fields) : handlesConfig;
+  const style =
+    typeof styleConfig === 'function' ? styleConfig(fields) : styleConfig;
+
+  const composedInputIds = collectComposedHandleIds(handles.inputs, id);
+  const composedOutputIds = collectComposedHandleIds(handles.outputs, id);
+  const handleKey = [...composedInputIds, ...composedOutputIds].join('|');
+  const prevHandleIdsRef = useRef(null);
+
+  useEffect(() => {
+    const prev = prevHandleIdsRef.current;
+    if (prev) {
+      const removedTargetHandleIds = prev.inputs.filter(
+        (handleId) => !composedInputIds.includes(handleId)
+      );
+      const removedSourceHandleIds = prev.outputs.filter(
+        (handleId) => !composedOutputIds.includes(handleId)
+      );
+      if (removedTargetHandleIds.length || removedSourceHandleIds.length) {
+        pruneDanglingEdges(id, removedTargetHandleIds, removedSourceHandleIds);
+      }
+    }
+    prevHandleIdsRef.current = { inputs: composedInputIds, outputs: composedOutputIds };
+    updateNodeInternals(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleKey, id]);
 
   const handleDelete = (event) => {
     event.stopPropagation();

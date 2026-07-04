@@ -58,9 +58,17 @@ export const useStore = create((set, get) => ({
           if (node.id === nodeId) {
             node.data = { ...node.data, [fieldName]: fieldValue };
           }
-  
+
           return node;
         }),
+      });
+    },
+    pruneDanglingEdges: (nodeId, removedTargetHandleIds = [], removedSourceHandleIds = []) => {
+      set({
+        edges: get().edges.filter((edge) => !(
+          (edge.target === nodeId && removedTargetHandleIds.includes(edge.targetHandle)) ||
+          (edge.source === nodeId && removedSourceHandleIds.includes(edge.sourceHandle))
+        )),
       });
     },
   }));
