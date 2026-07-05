@@ -6,7 +6,7 @@ import { useState, useRef, useCallback } from 'react';
 import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
-import { nodeTypes } from './nodes/nodeRegistry';
+import { nodeTypes, buildNodeData } from './nodes/nodeRegistry';
 
 import 'reactflow/dist/style.css';
 
@@ -36,10 +36,7 @@ export const PipelineUI = () => {
       onConnect
     } = useStore(selector, shallow);
 
-    const getInitNodeData = (nodeID, type) => {
-      let nodeData = { id: nodeID, nodeType: `${type}` };
-      return nodeData;
-    }
+    const getInitNodeData = (nodeID, type) => buildNodeData(type, nodeID);
 
     const onDrop = useCallback(
         (event) => {
@@ -98,6 +95,10 @@ export const PipelineUI = () => {
                 deleteKeyCode={['Backspace', 'Delete']}
                 nodesDeletable
                 edgesDeletable
+                selectionKeyCode="Shift"
+                multiSelectionKeyCode={['Meta', 'Control']}
+                selectNodesOnDrag
+                panOnDrag
             >
                 <Background color="#c7cbd6" gap={gridSize} size={1.5} />
                 <Controls showInteractive={false} />

@@ -54,13 +54,38 @@ export const useStore = create((set, get) => ({
     },
     updateNodeField: (nodeId, fieldName, fieldValue) => {
       set({
-        nodes: get().nodes.map((node) => {
-          if (node.id === nodeId) {
-            node.data = { ...node.data, [fieldName]: fieldValue };
-          }
-
-          return node;
-        }),
+        nodes: get().nodes.map((node) =>
+          node.id === nodeId
+            ? { ...node, data: { ...node.data, [fieldName]: fieldValue } }
+            : node
+        ),
+      });
+    },
+    insertClones: (newNodes, newEdges) => {
+      set({
+        nodes: [
+          ...get().nodes.map((n) => (n.selected ? { ...n, selected: false } : n)),
+          ...newNodes,
+        ],
+        edges: [...get().edges, ...newEdges],
+      });
+    },
+    selectAll: () => {
+      set({
+        nodes: get().nodes.map((n) => (n.selected ? n : { ...n, selected: true })),
+      });
+    },
+    deselectAll: () => {
+      set({
+        nodes: get().nodes.map((n) => (n.selected ? { ...n, selected: false } : n)),
+        edges: get().edges.map((e) => (e.selected ? { ...e, selected: false } : e)),
+      });
+    },
+    deleteNodesByIds: (ids) => {
+      const idSet = new Set(ids);
+      set({
+        nodes: get().nodes.filter((n) => !idSet.has(n.id)),
+        edges: get().edges.filter((e) => !idSet.has(e.source) && !idSet.has(e.target)),
       });
     },
     pruneDanglingEdges: (nodeId, removedTargetHandleIds = [], removedSourceHandleIds = []) => {

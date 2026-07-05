@@ -217,3 +217,19 @@ export const toolbarNodes = nodeDefinitions.map(({ type, toolbarLabel, icon, acc
   icon,
   accent,
 }));
+
+const resolveFieldDefault = (field, id, seedData) => {
+  if (seedData?.[field.name] !== undefined) return seedData[field.name];
+  if (typeof field.default === 'function') return field.default(id, seedData);
+  if (field.default !== undefined) return field.default;
+  return '';
+};
+
+export function buildNodeData(type, id, seedData = {}) {
+  const config = nodeDefinitions.find((c) => c.type === type);
+  const data = { id, nodeType: type };
+  (config?.fields || []).forEach((field) => {
+    data[field.name] = resolveFieldDefault(field, id, seedData);
+  });
+  return { ...data, ...seedData };
+}

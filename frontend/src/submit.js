@@ -28,14 +28,23 @@ export const SubmitButton = () => {
                 throw new Error(`Request failed with status ${response.status}`);
             }
 
-            const { num_nodes, num_edges, is_dag } = await response.json();
+            const { num_nodes, num_edges, is_dag, pipelines } = await response.json();
 
-            alert(
+            let message =
                 `Pipeline Analysis\n\n` +
                 `Nodes: ${num_nodes}\n` +
                 `Edges: ${num_edges}\n` +
-                `Is DAG: ${is_dag ? 'Yes' : 'No'}`
-            );
+                `Is DAG: ${is_dag ? 'Yes' : 'No'}`;
+
+            if (pipelines && pipelines.length > 1) {
+                message +=
+                    `\n\nFound ${pipelines.length} separate pipelines:\n` +
+                    pipelines
+                        .map((p, i) => `Pipeline ${i + 1}: ${p.num_nodes} nodes, ${p.num_edges} edges, DAG: ${p.is_dag ? 'Yes' : 'No'}`)
+                        .join('\n');
+            }
+
+            alert(message);
         } catch (error) {
             alert(`Failed to analyze pipeline: ${error.message}`);
         }
