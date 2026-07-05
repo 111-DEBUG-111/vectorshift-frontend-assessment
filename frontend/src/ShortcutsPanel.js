@@ -14,6 +14,7 @@ const SHORTCUTS = [
   { keys: [MOD_LABEL, 'D'], description: 'Duplicate selected node(s)' },
   { keys: [MOD_LABEL, 'A'], description: 'Select all nodes' },
   { keys: ['Delete'], description: 'Delete selected node(s)/edge(s)' },
+  { keys: ['Double-click'], description: 'Delete a connection' },
   { keys: ['Shift', 'Drag'], description: 'Box-select multiple nodes' },
   { keys: [MOD_LABEL, 'Click'], description: 'Add/remove a node from the selection' },
   { keys: ['Esc'], description: 'Deselect all' },

@@ -76,6 +76,14 @@ export const PipelineUI = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
+    const onEdgeDoubleClick = useCallback(
+        (event, edge) => {
+          event.stopPropagation();
+          reactFlowInstance.deleteElements({ edges: [{ id: edge.id }] });
+        },
+        [reactFlowInstance]
+    );
+
     return (
         <>
         <div ref={reactFlowWrapper} className="canvas-wrapper">
@@ -87,6 +95,7 @@ export const PipelineUI = () => {
                 onConnect={onConnect}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
+                onEdgeDoubleClick={onEdgeDoubleClick}
                 onInit={setReactFlowInstance}
                 nodeTypes={nodeTypes}
                 proOptions={proOptions}

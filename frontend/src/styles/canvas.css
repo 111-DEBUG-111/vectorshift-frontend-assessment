@@ -18,6 +18,10 @@
   stroke: var(--color-brand-solid);
 }
 
+.react-flow__edge:hover {
+  cursor: pointer;
+}
+
 .react-flow__edge.animated path {
   stroke-dasharray: 5;
 }
